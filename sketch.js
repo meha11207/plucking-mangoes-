@@ -2,7 +2,7 @@
 const Engine = Matter.Engine;
 const World = Matter.World;
 const Bodies = Matter.Bodies;
-const Body = Matter.Body;
+const Constraint = Matter.Constraint;
 
 var dground,tree,treeing;
 var boy,boying;
@@ -16,12 +16,19 @@ function preload()
 }
 
 function setup() {
-	createCanvas(800, 700);
+	createCanvas(1030, 700);
 
 
 	engine = Engine.create();
 	world = engine.world;
 
+	tree = createSprite(775,368)
+	tree.addImage(treeing)
+	tree.scale = 0.42
+
+	boy = createSprite(160,550)
+	boy.addImage(boying)
+	boy.scale = 0.125
 	//Create the Bodies Here.
      dground = new Ground();
 	 stones = new Stone(100,460,23)
@@ -33,18 +40,12 @@ function setup() {
 	 mango6 = new Mango(780,250,35)
 	 mango7 = new Mango(825,173,33)
 	 mango8 = new Mango(880,265,35)
-	 mango9= new Mango(940,220,35)
-	 mango10 = new Mango(980,305,35)
+	 mango9 = new Mango(940,220,35)
+	mango10 = new Mango(980,305,35)
 
 	 attach = new Throw(stones.body,{x: 100,y:465})
 
-	 tree = createSprite(775,368)
-	 tree.addImage(treeing)
-	 tree.scale = 0.42
 
-	 boy = createSprite(160,550)
-	 boy.addImage(boying)
-	 boy.scale = 0.125
 
 	Engine.run(engine);
   
@@ -53,10 +54,11 @@ function setup() {
 
 function draw() {
   rectMode(CENTER);
-  background("grey");
-
+  background("skyblue");
+  drawSprites();
   fill("black")
   textSize(18)
+  text("Press space key to get second chance",50,50)
 
   detectCollision(stones,mango1)
   detectCollision(stones,mango1)
@@ -70,7 +72,7 @@ function draw() {
   detectCollision(stones,mango1)
 
 
-  stones.diaplay()
+  stones.display()
   dground.display()
   mango1.display()
   mango2.display()
@@ -83,8 +85,6 @@ function draw() {
   mango9.display()
   mango10.display()
 
-
-  drawSprites();
  
 }
 
@@ -94,16 +94,18 @@ function mouseDragged(){
 function mouseReleased(){
 	attach.fly()
 }
-function detectCollision(lstones,lmango){
-	if(lstones.body.setPosition.x - lmango.body.setPosition.x <lmango.diametre + lstones.diametre
-		&& lmango.body.position.x - lstones.body.position.x <lmango.diametre + lstones.diametre
-		&& lmango.body.position.y - lstones.body.position.y <lmango.diametre + lstones.diamtre){
+function detectCollision(lstone,lmango){
+	mangoBodyPosition = lmango.body.position
+	stoneBodyPosition = lstone.body.position
+
+	var distance = dist(stoneBodyPosition.x,stoneBodyPosition.y,mangoBodyPosition.x,mangoBodyPosition.y)
+	if(distance<=lmango.r+lstone.r){
 			Matter.Body.setStatic(lmango.body,false)
 		}
 }
 function keyPressed(){
-	if(KeyCode === 32){
-		Matter.Body.setPosition(stones.body,{x:100,y:465})
-		attach.Launch(stones.body)
+	if(keyDown("space")){
+		Matter.Body.setPosition(stones.body,{x:100,y:420})
+		Launch.attach(stones.body)
 	}
 }
